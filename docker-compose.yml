@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  agent-dev:
+    container_name: agent-dev
+    image: agent-dev:latest
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        NODE: development
+    restart: always
+    ports:
+      - 3000:3000
