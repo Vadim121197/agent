@@ -8,7 +8,11 @@ import { MessageAnimation } from '@/components/animations'
 import { Addresses, chainAddresses } from '@/lib/chains'
 import { AvaPayment__factory } from '@/typechain-types/factories/AvaPayment__factory'
 import { Switch } from '@headlessui/react'
-import { waitForTransactionReceipt, writeContract } from '@wagmi/core'
+import {
+	estimateGas,
+	waitForTransactionReceipt,
+	writeContract,
+} from '@wagmi/core'
 import { createPortal } from 'react-dom'
 import { sha256 } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
@@ -73,24 +77,26 @@ export const Chat = ({
 
 			const hashedPrompt = sha256(Buffer.from(prompt, 'utf-8'))
 
-			const hash = await writeContract(config, {
+			const gas = await estimateGas(config, {
 				address: chainAddresses[chainId][Addresses.PAYMENT],
 				abi: AvaPayment__factory.abi,
 				functionName: 'buyIn',
 				args: [hashedPrompt],
 				value: BigInt(price),
 			})
-			console.log({ hash })
+
+			console.log({ gas })
+
+			const hash = await writeContract(config, {
+				address: chainAddresses[chainId][Addresses.PAYMENT],
+				abi: AvaPayment__factory.abi,
+				functionName: 'buyIn',
+				args: [hashedPrompt],
+				value: BigInt(price),
+				gas,
+			})
 
 			// await submitPrompt(sessionId, hash, prompt, address)
-
-			console.log({
-				context_data: {},
-				message: prompt,
-				timestamp: Date.now(),
-				transaction_hash: hash,
-				wallet_address: address,
-			})
 
 			const res = await axios.post(
 				API_URL + ApiRoutes.MESSAGES + `?wallet_address=${address}`,
@@ -100,7 +106,6 @@ export const Chat = ({
 					transaction_hash: hash,
 				}
 			)
-			console.log(res)
 
 			await waitForTransactionReceipt(config, { hash })
 			const llmRes = await verifyAndExecuteLLMPublic(hash)
