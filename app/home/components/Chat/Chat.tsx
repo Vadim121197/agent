@@ -180,6 +180,8 @@ export const Chat = ({
 		)
 	}, [selectedMessageTxHash])
 
+	console.log(messages)
+
 	return (
 		<div className='flex flex-col h-full'>
 			<div className='p-4'>
@@ -215,12 +217,6 @@ export const Chat = ({
 
 						return isNew ? (
 							<MessageAnimation key={`anim-${messageKey}`}>
-								<ChatMessage
-									message={message}
-									onSelect={msg => {
-										setSelectedMessageTxHash(msg.txHash)
-									}}
-								/>
 								<ChatMessage
 									message={message}
 									onSelect={msg => {

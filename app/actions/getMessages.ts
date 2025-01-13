@@ -24,11 +24,11 @@ export async function getRecentMessages(
 	limit: number = 50
 ): Promise<TMessage[]> {
 	try {
-		const res = await fetch(API_URL + ApiRoutes.MESSAGES + `?page_size=10`)
+		const res = await fetch(API_URL + ApiRoutes.MESSAGES + `?page_size=200`)
 
 		const { data } = await res.json()
 
-		return (data as TMessage[]).reverse()
+		return data as TMessage[]
 	} catch (error) {
 		console.error('Error fetching messages:', error)
 		return []
