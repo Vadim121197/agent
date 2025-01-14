@@ -30,9 +30,11 @@ export const Main = (props: TProps) => {
 		const newMessages = await getRecentMessages(
 			showOnlyUserMessages ? address : undefined
 		)
+
 		setMessages(newMessages)
 
 		const newGameState = await getGameState()
+
 		setGameState(newGameState)
 	}, [showOnlyUserMessages, address])
 

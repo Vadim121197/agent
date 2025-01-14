@@ -11,18 +11,19 @@ export type GameState = {
 
 export async function getGameState(): Promise<GameState> {
 	try {
-		const { total_users } = await axios.get<undefined, { total_users: number }>(
-			API_URL + ApiRoutes.STAT_USERS
-		)
-
-		const { total_messages } = await axios.get<
+		const { data: usersData } = await axios.get<
 			undefined,
-			{ total_messages: number }
+			{ data: { total_users: number } }
+		>(API_URL + ApiRoutes.STAT_USERS)
+
+		const { data: messagesData } = await axios.get<
+			undefined,
+			{ data: { total_messages: number } }
 		>(API_URL + ApiRoutes.STAT_MESSAGE)
 
 		return {
-			uniqueWallets: total_users,
-			messagesCount: total_messages,
+			uniqueWallets: usersData.total_users,
+			messagesCount: messagesData.total_messages,
 			endgameTime: moment().add(72, 'hours').toString(), // 24 hours from now
 			isGameEnded: false,
 		}

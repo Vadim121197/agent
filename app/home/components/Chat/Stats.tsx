@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import moment from 'moment'
+import moment, { Duration } from 'moment'
 import { useEffect, useState } from 'react'
 
 interface StatsProps {
@@ -18,7 +18,7 @@ export const Stats = ({
 	endgameTime,
 	isGameEnded,
 }: StatsProps) => {
-	const [timeRemaining, setTimeRemaining] = useState('')
+	const [duration, setDuration] = useState<Duration | undefined>()
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -28,18 +28,16 @@ export const Stats = ({
 
 			if (diff <= 0) {
 				clearInterval(interval)
-				setTimeRemaining("Time's up!")
+				setDuration(undefined)
 			} else {
 				const duration = moment.duration(diff)
-				const formatted = `${
-					duration.days() * 60 + duration.hours()
-				}:${duration.minutes()}:${duration.seconds()}`
-				setTimeRemaining(formatted)
+
+				setDuration(duration)
 			}
 		}, 1000)
 
 		return () => clearInterval(interval)
-	}, [endgameTime])
+	}, [])
 
 	return (
 		<div className={cn('px-0 lg:px-12', className)}>
@@ -77,8 +75,12 @@ export const Stats = ({
 								<h3 className='text-md font-[600] text-[#86868b] uppercase tracking-wider font-inter'>
 									Time Remaining
 								</h3>
-								<p className='text-5xl font-[500] text-[#1F2024] font-inter'>
-									{timeRemaining}
+								<p className='text-5xl font-[500] text-[#1F2024] font-inter break-all'>
+									{duration
+										? `${
+												duration.days() * 60 + duration.hours()
+										  }:${duration.minutes()}:${duration.seconds()}`
+										: "Time's up!"}
 								</p>
 							</div>
 						</div>
