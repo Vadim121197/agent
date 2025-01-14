@@ -12,6 +12,7 @@ import { useAccount } from 'wagmi'
 import { ConversationModal } from './Chat/ConversationModal'
 import { HowItWorks } from './Chat/HowItWorks'
 import { Stats } from './Chat/Stats'
+import { Shield } from 'lucide-react'
 
 type TProps = {
 	messages: Message[]
@@ -100,14 +101,8 @@ export const Main = (props: TProps) => {
 							prizeFund={prizeFund}
 						/>
 						<div className='relative inline-flex items-center gap-3'>
-							<div className='w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_2px_10px_rgba(0,0,0,0.06)]'>
-								<Image
-									src='/freysa.png'
-									alt='Kira'
-									height={48}
-									width={48}
-									className='rounded-full'
-								/>
+							<div className='w-12 h-12 rounded-full bg-violet-500/90 flex items-center justify-center flex-shrink-0 shadow-[0_2px_10px_rgba(0,0,0,0.06)]'>
+								<Shield className='w-12 h-12 text-white rounded-full' />
 							</div>
 
 							<div className='relative inline-block'>
