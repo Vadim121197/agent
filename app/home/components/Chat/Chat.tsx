@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { submitPrompt, verifyAndExecuteLLMPublic } from '@/app/actions'
-import { TMessage } from '@/app/actions/getMessages'
+import { verifyAndExecuteLLMPublic } from '@/app/actions'
+import { getRecentMessages, Message } from '@/app/actions/getMessages'
 import { getSessionWithPrice } from '@/app/actions/getSessionWithPrice'
 import { config } from '@/app/wagmi'
 import { MessageAnimation } from '@/components/animations'
+import { API_URL, ApiRoutes } from '@/lib/api-routes'
 import { Addresses, chainAddresses } from '@/lib/chains'
 import { AvaPayment__factory } from '@/typechain-types/factories/AvaPayment__factory'
 import { Switch } from '@headlessui/react'
@@ -13,16 +14,15 @@ import {
 	waitForTransactionReceipt,
 	writeContract,
 } from '@wagmi/core'
+import axios from 'axios'
 import { createPortal } from 'react-dom'
-import { sha256 } from 'viem'
+import { Address, sha256 } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 import { ChatMessage } from './ChatMessage'
 import { ConversationModal } from './ConversationModal'
-import { API_URL, ApiRoutes } from '@/lib/api-routes'
-import axios from 'axios'
 
 type TProps = {
-	messages: TMessage[]
+	messages: Message[]
 	className?: string
 	queryNewMessages: () => Promise<void>
 	showOnlyUserMessages: boolean
@@ -78,14 +78,12 @@ export const Chat = ({
 			const hashedPrompt = sha256(Buffer.from(prompt, 'utf-8'))
 
 			const gas = await estimateGas(config, {
-				address: chainAddresses[chainId][Addresses.PAYMENT],
+				address: chainAddresses[chainId][Addresses.PAYMENT] as Address,
 				abi: AvaPayment__factory.abi,
 				functionName: 'buyIn',
 				args: [hashedPrompt],
 				value: BigInt(price),
 			})
-
-			console.log({ gas })
 
 			const hash = await writeContract(config, {
 				address: chainAddresses[chainId][Addresses.PAYMENT],
@@ -98,7 +96,7 @@ export const Chat = ({
 
 			// await submitPrompt(sessionId, hash, prompt, address)
 
-			const res = await axios.post(
+			await axios.post(
 				API_URL + ApiRoutes.MESSAGES + `?wallet_address=${address}`,
 				{
 					message: prompt,
@@ -106,6 +104,8 @@ export const Chat = ({
 					transaction_hash: hash,
 				}
 			)
+
+			await getRecentMessages(showOnlyUserMessages ? address : undefined)
 
 			await waitForTransactionReceipt(config, { hash })
 			const llmRes = await verifyAndExecuteLLMPublic(hash)
@@ -152,7 +152,7 @@ export const Chat = ({
 			// Check if the last message content is different
 			if (currentLastMessage.content !== lastMessageContentRef.current) {
 				scrollToBottom()
-				lastMessageRef.current = currentLastMessage.id
+				lastMessageRef.current = String(currentLastMessage.id)
 			}
 
 			lastMessageContentRef.current = currentLastMessage.content
@@ -184,8 +184,6 @@ export const Chat = ({
 			document.body
 		)
 	}, [selectedMessageTxHash])
-
-	console.log(messages)
 
 	return (
 		<div className='flex flex-col h-full'>
@@ -225,7 +223,7 @@ export const Chat = ({
 								<ChatMessage
 									message={message}
 									onSelect={msg => {
-										setSelectedMessageTxHash(msg.txHash)
+										// setSelectedMessageTxHash(msg.tx_hash)
 									}}
 								/>
 							</MessageAnimation>
@@ -234,7 +232,7 @@ export const Chat = ({
 								key={messageKey}
 								message={message}
 								onSelect={msg => {
-									setSelectedMessageTxHash(msg.txHash)
+									// setSelectedMessageTxHash(msg.tx_hash)
 								}}
 							/>
 						)

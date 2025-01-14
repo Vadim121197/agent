@@ -5,7 +5,7 @@ import { PublicKey, Cluster } from "@solana/web3.js";
 
 
 export const config = getDefaultConfig({
-  appName: "Freysa",
+  appName: "Kira",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
   chains: [
     process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" 

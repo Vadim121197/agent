@@ -1,6 +1,6 @@
-# Freysa
+# Kira
 
-Freysa is a decentralized LLM hacking game running on Base.
+Kira is a decentralized LLM hacking game running on Base.
 
 
 ```

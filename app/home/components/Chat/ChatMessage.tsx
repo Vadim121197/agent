@@ -1,11 +1,13 @@
-import { Shield } from 'lucide-react'
+import { Message } from '@/app/actions/getMessages'
 import Avatar from 'boring-avatars'
-import { TMessage } from '@/app/actions/getMessages'
-import { format } from 'timeago.js'
+import { Shield } from 'lucide-react'
 import Image from 'next/image'
+import { format } from 'timeago.js'
+import { Markdown } from './Markdown'
+
 type ChatMessageProps = {
-	message: TMessage
-	onSelect?: (message: TMessage) => void
+	message: Message
+	onSelect?: (message: Message) => void
 	showTime?: boolean
 }
 
@@ -33,7 +35,7 @@ export const ChatMessage = ({
 						}`}
 					>
 						{isUser ? (
-							<Avatar size={32} name={message.userWallet} variant='pixel' />
+							<Avatar size={32} name={message.wallet} variant='pixel' />
 						) : isSystem ? (
 							<div className='bg-violet-500/90 w-full h-full flex items-center justify-center'>
 								<Shield className='w-4 h-4 text-white' />
@@ -41,7 +43,7 @@ export const ChatMessage = ({
 						) : (
 							<div className='bg-gray-600/90 w-full h-full flex items-center justify-center'>
 								{/* <Bot className="w-4 h-4 text-white" /> */}
-								<Image src='/freysa.png' alt='Freysa' height={32} width={32} />
+								<Image src='/freysa.png' alt='Kira' height={32} width={32} />
 							</div>
 						)}
 					</div>
@@ -52,12 +54,12 @@ export const ChatMessage = ({
 					className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
 				>
 					{/* Wallet address - only visible on desktop */}
-					{isUser && message.userWallet && (
+					{isUser && message.wallet && (
 						<div className='hidden lg:flex items-center gap-1 mb-1 mr-1'>
 							<span className='text-xs text-gray-500'>
-								{truncateAddress(message.userWallet)}
+								{truncateAddress(message.wallet)}
 							</span>
-							{message.isWinner && (
+							{message.is_winner && (
 								<span className='text-xs text-amber-500 font-medium'>
 									🏆 Winner!
 								</span>
@@ -67,7 +69,7 @@ export const ChatMessage = ({
 					<div
 						onClick={() => {
 							if (isUser && onSelect && 'id' in message) {
-								onSelect(message as TMessage)
+								onSelect(message as Message)
 							}
 						}}
 						role={isUser ? 'button' : undefined}
@@ -78,17 +80,17 @@ export const ChatMessage = ({
 							isSystem
 								? 'bg-violet-100 text-violet-900'
 								: isUser
-								? message.isWinner
+								? message.is_winner
 									? 'bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 text-white shadow-lg shadow-amber-500/20'
 									: 'bg-gray-200 text-gray-900'
 								: 'bg-gray-800 text-white'
 						}`}
 					>
 						<div className='flex flex-col gap-2'>
-							<p className='text-[15px] leading-relaxed'>{message.content}</p>
-							{!isUser && message.isWinner && (
+							<Markdown markdown={message.content ?? ''} />
+							{!isUser && message.is_winner && (
 								<p className='text-[13px] text-emerald-300 font-medium mt-1'>
-									Freysa decided to send the money
+									Kira decided to send the money
 								</p>
 							)}
 						</div>
@@ -96,7 +98,7 @@ export const ChatMessage = ({
 					{showTime && 'createdAt' in message && (
 						<div className='flex items-center gap-2 mt-1'>
 							<span className='text-xs text-gray-500 opacity-70'>
-								{format(new Date(message.createdAt))}
+								{format(new Date(message.created_at))}
 							</span>
 						</div>
 					)}

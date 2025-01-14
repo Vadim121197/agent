@@ -1,28 +1,28 @@
 'use client'
-import { motion, AnimatePresence } from 'framer-motion'
-import { NumberTickerDemo, TypingAnimationDemo } from '@/components/animations'
-import { getRecentMessages, TMessage } from '@/app/actions/getMessages'
-import { Header } from '@/app/home/components/Header'
+import { GameState, getGameState } from '@/app/actions/getGameState'
+import { getRecentMessages, Message } from '@/app/actions/getMessages'
 import { Chat } from '@/app/home/components/Chat/Chat'
-import { useState, useCallback, useEffect } from 'react'
-import { ConversationModal } from './Chat/ConversationModal'
+import { Header } from '@/app/home/components/Header'
+import { usePrizeFund } from '@/app/hooks/prize-fund'
+import { NumberTickerDemo, TypingAnimationDemo } from '@/components/animations'
+import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
+import { useCallback, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { ConversationModal } from './Chat/ConversationModal'
 import { HowItWorks } from './Chat/HowItWorks'
 import { Stats } from './Chat/Stats'
-import { getGameState, TGameState } from '@/app/actions/getGameState'
-import Image from 'next/image'
-import { usePrizeFund } from '@/app/hooks/prize-fund'
 
 type TProps = {
-	messages: TMessage[]
-	gameState: TGameState
+	messages: Message[]
+	gameState: GameState
 }
 
 export const Main = (props: TProps) => {
 	const prizeFund = usePrizeFund()
-	const [messages, setMessages] = useState<TMessage[]>(props.messages)
-	const [gameState, setGameState] = useState<TGameState>(props.gameState)
-	const [selectedMessage, setSelectedMessage] = useState<TMessage | null>(null)
+	const [messages, setMessages] = useState<Message[]>(props.messages)
+	const [gameState, setGameState] = useState<GameState>(props.gameState)
+	const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
 	const [showOnlyUserMessages, setShowOnlyUserMessages] = useState(false)
 	const { address } = useAccount()
 
@@ -101,7 +101,7 @@ export const Main = (props: TProps) => {
 							<div className='w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-[0_2px_10px_rgba(0,0,0,0.06)]'>
 								<Image
 									src='/freysa.png'
-									alt='Freysa'
+									alt='Kira'
 									height={48}
 									width={48}
 									className='rounded-full'
@@ -128,7 +128,7 @@ export const Main = (props: TProps) => {
 						</div>
 					</motion.div>
 
-					<div className='flex-1 pb-8 min-h-0 flex justify-center'>
+					<div className='flex-1 min-h-0 flex justify-center'>
 						<motion.div
 							className='h-full rounded-3xl overflow-hidden max-w-3xl w-full'
 							initial={{ opacity: 0, scale: 1.02 }}
@@ -160,7 +160,7 @@ export const Main = (props: TProps) => {
 			<AnimatePresence>
 				{selectedMessage && (
 					<ConversationModal
-						messageId={selectedMessage.txHash}
+						messageId={selectedMessage.tx_hash}
 						onClose={() => setSelectedMessage(null)}
 					/>
 				)}

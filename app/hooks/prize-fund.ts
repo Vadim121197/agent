@@ -41,8 +41,6 @@ export const usePrizeFund = () => {
 		address: chainAddresses[chainId][Addresses.POOL],
 	})
 
-	console.log(balance)
-
 	useEffect(() => {
 		const interval = setInterval(() => {
 			refetchContractData()

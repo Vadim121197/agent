@@ -3,7 +3,7 @@ import { getRecentMessages } from '@/app/actions/getMessages'
 import { Main } from '@/app/home/components/Main'
 
 export default async function Page() {
-	const messages = await getRecentMessages(undefined, 100)
+	const messages = await getRecentMessages()
 	const gameState = await getGameState()
 
 	return <Main messages={messages} gameState={gameState} />

@@ -68,6 +68,9 @@ dependencies:
   lucide-react:
     specifier: ^0.460.0
     version: 0.460.0(react@19.0.0-rc-66855b96-20241106)
+  moment:
+    specifier: ^2.30.1
+    version: 2.30.1
   next:
     specifier: 15.0.3
     version: 15.0.3(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106)
@@ -90,7 +93,7 @@ dependencies:
     specifier: 19.0.0-rc-66855b96-20241106
     version: 19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106)
   react-markdown:
-    specifier: ^9.0.1
+    specifier: ^9.0.3
     version: 9.0.3(@types/react@18.3.18)(react@19.0.0-rc-66855b96-20241106)
   tailwind-merge:
     specifier: ^2.5.4
@@ -6037,6 +6040,10 @@ packages:
 
   /modern-ahocorasick@1.1.0:
     resolution: {integrity: sha512-sEKPVl2rM+MNVkGQt3ChdmD8YsigmXdn5NifZn6jiwn9LRJpWm8F3guhaqrJT/JOat6pwpbXEk6kv+b9DMIjsQ==}
+    dev: false
+
+  /moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
     dev: false
 
   /motion-dom@11.16.4:
