@@ -16,7 +16,7 @@ import {
 } from '@wagmi/core'
 import axios from 'axios'
 import { createPortal } from 'react-dom'
-import { encodeFunctionData, sha256 } from 'viem'
+import { sha256 } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 import { ChatMessage } from './ChatMessage'
 import { ConversationModal } from './ConversationModal'
@@ -78,11 +78,9 @@ export const Chat = ({
 			const hashedPrompt = sha256(Buffer.from(prompt, 'utf-8'))
 
 			const gas = await estimateGas(config, {
-				data: encodeFunctionData({
-					abi: AvaPayment__factory.abi,
-					functionName: 'buyIn',
-					args: [hashedPrompt],
-				}),
+				abi: AvaPayment__factory.abi,
+				functionName: 'buyIn',
+				args: [hashedPrompt],
 				account: address,
 				value: BigInt(price),
 			})

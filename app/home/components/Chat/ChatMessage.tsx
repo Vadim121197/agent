@@ -2,7 +2,6 @@ import { Message } from '@/app/actions/getMessages'
 import Avatar from 'boring-avatars'
 import { Shield } from 'lucide-react'
 import Image from 'next/image'
-import { format } from 'timeago.js'
 import { Markdown } from './Markdown'
 import { useAccount } from 'wagmi'
 import moment from 'moment'
@@ -26,6 +25,10 @@ export const ChatMessage = ({
 	const { chain } = useAccount()
 	const isUser = message.role === 'user'
 	const isSystem = message.role === 'system'
+
+	console.log(
+		moment.utc(message.created_at).local().format('MMMM Do YYYY, h:mm:ss a')
+	)
 
 	return (
 		<div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -110,7 +113,7 @@ export const ChatMessage = ({
 					{showTime && 'created_at' in message && (
 						<div className='flex items-center gap-2 mt-1'>
 							<span className='text-xs text-gray-500 opacity-70'>
-								{moment(message.created_at).startOf('hour').fromNow()}
+								{moment.utc(message.created_at).local().fromNow()}
 							</span>
 						</div>
 					)}
