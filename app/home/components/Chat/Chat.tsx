@@ -16,7 +16,7 @@ import {
 } from '@wagmi/core'
 import axios from 'axios'
 import { createPortal } from 'react-dom'
-import { Address, sha256 } from 'viem'
+import { encodeFunctionData, sha256 } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 import { ChatMessage } from './ChatMessage'
 import { ConversationModal } from './ConversationModal'
@@ -78,10 +78,12 @@ export const Chat = ({
 			const hashedPrompt = sha256(Buffer.from(prompt, 'utf-8'))
 
 			const gas = await estimateGas(config, {
-				address: chainAddresses[chainId][Addresses.PAYMENT] as Address,
-				abi: AvaPayment__factory.abi,
-				functionName: 'buyIn',
-				args: [hashedPrompt],
+				data: encodeFunctionData({
+					abi: AvaPayment__factory.abi,
+					functionName: 'buyIn',
+					args: [hashedPrompt],
+				}),
+				account: address,
 				value: BigInt(price),
 			})
 
@@ -93,8 +95,6 @@ export const Chat = ({
 				value: BigInt(price),
 				gas,
 			})
-
-			// await submitPrompt(sessionId, hash, prompt, address)
 
 			await axios.post(
 				API_URL + ApiRoutes.MESSAGES + `?wallet_address=${address}`,
@@ -188,7 +188,7 @@ export const Chat = ({
 
 	return (
 		<div className='flex flex-col h-full'>
-			<div className='p-4'>
+			<div className='pb-4'>
 				<div className='flex items-center justify-end'>
 					<div className='flex items-center space-x-3'>
 						<span className='text-xs font-normal text-gray-700'>

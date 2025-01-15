@@ -87,7 +87,7 @@ export const Main = (props: TProps) => {
 				{/* Center Column */}
 				<div className='flex-1 flex flex-col overflow-hidden px-4 lg:px-8'>
 					<motion.div
-						className='flex-shrink-0 text-center pb-4 lg:pb-8 max-w-3xl mx-auto w-full'
+						className='flex-shrink-0 text-center pb-1 max-w-3xl mx-auto w-full'
 						initial={{ y: '50vh', translateY: '-50%' }}
 						animate={{ y: 0, translateY: 0 }}
 						transition={{
@@ -97,7 +97,7 @@ export const Main = (props: TProps) => {
 						}}
 					>
 						<NumberTickerDemo
-							className='mb-4 lg:mb-8 text-2xl lg:text-3xl'
+							className='mb-4 text-2xl lg:text-3xl'
 							prizeFund={prizeFund}
 						/>
 						<div className='relative inline-flex items-center gap-3'>

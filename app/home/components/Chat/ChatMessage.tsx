@@ -4,6 +4,8 @@ import { Shield } from 'lucide-react'
 import Image from 'next/image'
 import { format } from 'timeago.js'
 import { Markdown } from './Markdown'
+import { useAccount } from 'wagmi'
+import moment from 'moment'
 
 type ChatMessageProps = {
 	message: Message
@@ -21,6 +23,7 @@ export const ChatMessage = ({
 	onSelect,
 	showTime = true,
 }: ChatMessageProps) => {
+	const { chain } = useAccount()
 	const isUser = message.role === 'user'
 	const isSystem = message.role === 'system'
 
@@ -93,12 +96,21 @@ export const ChatMessage = ({
 									Kira decided to send the money
 								</p>
 							)}
+							{chain?.blockExplorers?.default.url && isUser && (
+								<a
+									href={`${chain.blockExplorers.default.url}/tx/${message.tx_hash}`}
+									target='_blank'
+									className='text-violet-900 text-[12px] underline italic'
+								>
+									View on Etherscan
+								</a>
+							)}
 						</div>
 					</div>
-					{showTime && 'createdAt' in message && (
+					{showTime && 'created_at' in message && (
 						<div className='flex items-center gap-2 mt-1'>
 							<span className='text-xs text-gray-500 opacity-70'>
-								{format(new Date(message.created_at))}
+								{moment(message.created_at).startOf('hour').fromNow()}
 							</span>
 						</div>
 					)}
