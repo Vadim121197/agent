@@ -113,6 +113,7 @@ export const Chat = ({
 				await queryNewMessages()
 				setStatus('idle')
 				setPrompt('')
+				setTextareaHeight(40)
 			} else {
 				setError(llmRes.error ?? 'Something went wrong')
 			}
