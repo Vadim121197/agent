@@ -185,8 +185,8 @@ export const Chat = ({
 	}, [selectedMessageTxHash])
 
 	return (
-		<div className='flex flex-col h-full'>
-			<div className='pb-4'>
+		<div className='flex flex-col h-full '>
+			<div className='px-4 pb-4'>
 				<div className='flex items-center justify-end'>
 					<div className='flex items-center space-x-3'>
 						<span className='text-xs font-normal text-gray-700'>
