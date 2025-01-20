@@ -14,7 +14,7 @@ import {
 } from '@wagmi/core'
 import { createPortal } from 'react-dom'
 import { encodeFunctionData, sha256 } from 'viem'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount, useBalance, useChainId } from 'wagmi'
 import { ChatMessage } from './ChatMessage'
 import { ConversationModal } from './ConversationModal'
 import axios from 'axios'
@@ -42,6 +42,9 @@ export const Chat = ({
 	const [status, setStatus] = useState<TransactionStatus>('idle')
 	const [error, setError] = useState<string>('')
 	const { address } = useAccount()
+	const { data: balance } = useBalance({
+		address,
+	})
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const lastMessageRef = useRef<string | null>(null)
 	const lastMessageContentRef = useRef<string | null>(null)
@@ -49,7 +52,20 @@ export const Chat = ({
 		string | null
 	>(null)
 	const [textareaHeight, setTextareaHeight] = useState(40)
+	const [msgPrice, setMsgPrice] = useState<bigint>(BigInt(0))
 	const chainId = useChainId()
+
+	useEffect(() => {
+		void (async () => {
+			const price = await readContract(config, {
+				abi: bondingCurveAbi,
+				address: chainAddresses[chainId][Addresses.PAYMENT],
+				functionName: 'FIXED_MESSAGE_PRICE',
+			})
+
+			setMsgPrice(price)
+		})()
+	}, [])
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault()
@@ -72,12 +88,6 @@ export const Chat = ({
 			setStatus('pending')
 			setError('')
 
-			const price = await readContract(config, {
-				abi: bondingCurveAbi,
-				address: chainAddresses[chainId][Addresses.PAYMENT],
-				functionName: 'FIXED_MESSAGE_PRICE',
-			})
-
 			const hashedPrompt = sha256(Buffer.from(prompt, 'utf-8'))
 
 			const gas = await estimateGas(config, {
@@ -87,7 +97,7 @@ export const Chat = ({
 					args: [hashedPrompt],
 					functionName: 'buyIn',
 				}),
-				value: price,
+				value: msgPrice,
 			})
 
 			const hash = await writeContract(config, {
@@ -95,7 +105,7 @@ export const Chat = ({
 				abi: bondingCurveAbi,
 				functionName: 'buyIn',
 				args: [hashedPrompt],
-				value: BigInt(price),
+				value: BigInt(msgPrice),
 				gas,
 			})
 
@@ -294,7 +304,10 @@ export const Chat = ({
 							/>
 							<button
 								onClick={handleSend}
-								disabled={status === 'pending'}
+								disabled={
+									status === 'pending' ||
+									msgPrice >= BigInt(balance?.value ?? 0)
+								}
 								className={`flex-shrink-0 bg-blue-500 hover:bg-blue-600 text-white p-2 h-10 w-10 flex items-center justify-center disabled:opacity-75 disabled:cursor-not-allowed ${
 									textareaHeight > 40 ? 'rounded-xl' : 'rounded-full'
 								}`}
