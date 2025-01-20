@@ -1,14 +1,6 @@
 import { API_URL, ApiRoutes } from '@/src/lib/api-routes'
 import axios from 'axios'
 
-export interface Pagination<T> {
-	data: T[]
-	page_number: number
-	page_size: number
-	total_items: number
-	total_pages: number
-}
-
 export interface Chat {
 	name: string
 	uuid: string
@@ -16,7 +8,7 @@ export interface Chat {
 	created_at: string
 	state: 'active'
 	user_id: number
-	history: []
+	history: Message[]
 }
 
 export enum MessageRole {
@@ -25,15 +17,12 @@ export enum MessageRole {
 }
 
 export interface Message {
-	id: number
-	user_id: number
 	content: string
-	created_at: string
-	is_winner: boolean
+	decision?: 'reject'
+	is_approved: boolean
 	role: MessageRole
-	tx_hash: string
-	full_conversation: null
-	wallet: string
+	timestamp: number
+	tx_hash?: string
 }
 
 export async function getRecentMessages(wallet: string): Promise<Message[]> {
@@ -41,8 +30,6 @@ export async function getRecentMessages(wallet: string): Promise<Message[]> {
 		const data = await axios.get<undefined, Chat>(
 			API_URL + ApiRoutes.CHATS_SELECTED + `?wallet_address=${wallet}`
 		)
-
-		console.log({ data })
 
 		return data.data.history
 	} catch (error) {

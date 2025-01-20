@@ -142,7 +142,7 @@ export const Main = (props: { gameState: GameState }) => {
 
 			{/* Modal */}
 			<AnimatePresence>
-				{selectedMessage && (
+				{selectedMessage?.tx_hash && (
 					<ConversationModal
 						messageId={selectedMessage.tx_hash}
 						onClose={() => setSelectedMessage(null)}

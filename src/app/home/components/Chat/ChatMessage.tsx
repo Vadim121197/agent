@@ -22,9 +22,11 @@ export const ChatMessage = ({
 	onSelect,
 	showTime = true,
 }: ChatMessageProps) => {
-	const { chain } = useAccount()
+	const { chain, address } = useAccount()
 	const isUser = message.role === 'user'
 	const isSystem = message.role === 'system'
+
+	const isWinner = false
 
 	return (
 		<div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -37,7 +39,7 @@ export const ChatMessage = ({
 						}`}
 					>
 						{isUser ? (
-							<Avatar size={32} name={message.wallet} variant='pixel' />
+							<Avatar size={32} name={address} variant='pixel' />
 						) : isSystem ? (
 							<div className='bg-violet-500/90 w-full h-full flex items-center justify-center'>
 								<Shield className='w-4 h-4 text-white' />
@@ -56,12 +58,12 @@ export const ChatMessage = ({
 					className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
 				>
 					{/* Wallet address - only visible on desktop */}
-					{isUser && message.wallet && (
+					{isUser && address && (
 						<div className='hidden lg:flex items-center gap-1 mb-1 mr-1'>
 							<span className='text-xs text-gray-500'>
-								{truncateAddress(message.wallet)}
+								{truncateAddress(address)}
 							</span>
-							{message.is_winner && (
+							{isWinner && (
 								<span className='text-xs text-amber-500 font-medium'>
 									🏆 Winner!
 								</span>
@@ -82,7 +84,7 @@ export const ChatMessage = ({
 							isSystem
 								? 'bg-violet-100 text-violet-900'
 								: isUser
-								? message.is_winner
+								? isWinner
 									? 'bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 text-white shadow-lg shadow-amber-500/20'
 									: 'bg-gray-200 text-gray-900'
 								: 'bg-gray-800 text-white'
@@ -90,7 +92,7 @@ export const ChatMessage = ({
 					>
 						<div className='flex flex-col gap-2'>
 							<Markdown markdown={message.content ?? ''} />
-							{!isUser && message.is_winner && (
+							{!isUser && isWinner && (
 								<p className='text-[13px] text-emerald-300 font-medium mt-1'>
 									Kira decided to send the money
 								</p>
@@ -106,10 +108,10 @@ export const ChatMessage = ({
 							)}
 						</div>
 					</div>
-					{showTime && 'created_at' in message && (
+					{showTime && 'timestamp' in message && (
 						<div className='flex items-center gap-2 mt-1'>
 							<span className='text-xs text-gray-500 opacity-70'>
-								{moment.utc(message.created_at).local().fromNow()}
+								{moment.utc(message.timestamp).local().fromNow()}
 							</span>
 						</div>
 					)}

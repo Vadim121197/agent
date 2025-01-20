@@ -99,15 +99,15 @@ export const Chat = ({
 				gas,
 			})
 
-			// if (!messages.length) {
-			// 	try {
-			// 		await axios.post(
-			// 			API_URL + ApiRoutes.CHATS + `?wallet_address=${address}`
-			// 		)
-			// 	} catch (error) {
-			// 		console.log({ error })
-			// 	}
-			// }
+			if (!messages.length) {
+				try {
+					await axios.post(
+						API_URL + ApiRoutes.CHATS + `?wallet_address=${address}`
+					)
+				} catch (error) {
+					console.log({ error })
+				}
+			}
 
 			await axios.post(
 				API_URL + ApiRoutes.CHATS_SELECTED + `?wallet_address=${address}`,
@@ -163,7 +163,7 @@ export const Chat = ({
 			// Check if the last message content is different
 			if (currentLastMessage.content !== lastMessageContentRef.current) {
 				scrollToBottom()
-				lastMessageRef.current = String(currentLastMessage.id)
+				lastMessageRef.current = String(currentLastMessage.timestamp)
 			}
 
 			lastMessageContentRef.current = currentLastMessage.content
@@ -225,8 +225,8 @@ export const Chat = ({
 
 			<div className='flex-1 overflow-y-auto scroll-smooth'>
 				<div className='p-4 space-y-6'>
-					{messages.map(message => {
-						const messageKey = `${message.id}-${message.content}`
+					{messages.map((message, index) => {
+						const messageKey = index
 						const isNew = message === messages[messages.length - 1]
 
 						return isNew ? (
